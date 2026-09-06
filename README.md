@@ -19,7 +19,7 @@ irm https://raw.githubusercontent.com/Rommel96/lako-releases/main/install.ps1 | 
 > 1. **Direct Download:** Downloads the pre-built native package (`lako-v1.0.0-windows-amd64.zip`) directly from GitHub Releases without requiring tokens or authentication.
 > 2. **Clean Installation:** Extracts and installs into `%LOCALAPPDATA%\Programs\Lako`.
 > 3. **Adds to User PATH:** Automatically adds `lako` to your User `PATH` environment variable so you can run `lako doctor` or `lako ui` from PowerShell, CMD, or Windows Terminal.
-> 4. **Optional Production Mode:** Prompts to register a background task (`LakoConfigurationServer`) that starts Lako automatically on login/boot and keeps it running quietly in the background at `http://127.0.0.1:8080/`.
+> 4. **Optional Production Mode:** Prompts to register a background task (`LakoConfigurationServer`) that starts Lako automatically on login/boot and keeps it running quietly in the background at `http://127.0.0.1:25256/`.
 > 5. **1-Click Launcher:** Includes `start.bat` and `start.ps1` in the install directory to launch the UI with a double click.
 
 To install non-interactively with Production Mode service enabled:
@@ -64,8 +64,11 @@ lako version
 # Diagnose installed CLI runtimes (Claude Code, OpenCode, Codex, Antigravity, Kiro)
 lako doctor
 
-# Launch the local web UI control center
-lako ui --port 8080
+# Launch the local web UI control center (default port: 25256)
+lako ui
+
+# Or specify custom port
+lako ui --port 25256
 ```
 
-Then navigate to `http://127.0.0.1:8080/` to manage agents, skills, and usage telemetry.
+Then navigate to `http://127.0.0.1:25256/` to manage agents, skills, and usage telemetry.

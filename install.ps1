@@ -145,20 +145,20 @@ try {
     Write-Host "Available commands:" -ForegroundColor Gray
     Write-Host "  lako version              Check installed version" -ForegroundColor Gray
     Write-Host "  lako doctor               Diagnose detected runtimes" -ForegroundColor Gray
-    Write-Host "  lako ui --port 8080       Launch local UI server" -ForegroundColor Gray
+    Write-Host "  lako ui                   Launch local UI server on port 25256" -ForegroundColor Gray
     Write-Host "  start.bat                 1-Click launcher in $InstallDir" -ForegroundColor Gray
     Write-Host ""
 
     # 6. Start now if requested
     if ($StartNow) {
         Write-Host "Starting Lako..." -ForegroundColor Cyan
-        Start-Process "http://127.0.0.1:8080/"
-        & "$InstallDir\lako.exe" ui --port 8080
+        Start-Process "http://127.0.0.1:25256/"
+        & "$InstallDir\lako.exe" ui --port 25256
     } else {
         $RunNow = Read-Host "Would you like to launch the Lako UI now? (Y/N) [Default: Y]"
         if ($RunNow -ne "N" -and $RunNow -ne "n") {
-            Start-Process "http://127.0.0.1:8080/"
-            & "$InstallDir\lako.exe" ui --port 8080
+            Start-Process "http://127.0.0.1:25256/"
+            & "$InstallDir\lako.exe" ui --port 25256
         }
     }
 
