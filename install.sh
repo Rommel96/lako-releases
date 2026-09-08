@@ -32,7 +32,7 @@ ARCHIVE="${TMP_DIR}/lako.tar.gz"
 # 1. Direct download from GitHub Releases (no gh CLI or token required)
 TAG="${VERSION}"
 if [ "${TAG}" = "latest" ]; then
-    DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/lako-v1.0.0-${OS}-${ARCH}.tar.gz"
+    DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/lako-v1.1.0-${OS}-${ARCH}.tar.gz"
 else
     case "${TAG}" in
         v*) ;;

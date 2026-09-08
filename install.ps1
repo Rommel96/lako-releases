@@ -36,7 +36,7 @@ $ZipPath = Join-Path $TempDir "lako-windows.zip"
 try {
     # 1. Direct download from GitHub Releases (no gh CLI or token required)
     $Downloaded = $false
-    $Tag = if ($Version -eq "latest") { "v1.0.0" } elseif ($Version.StartsWith("v")) { $Version } else { "v$Version" }
+    $Tag = if ($Version -eq "latest") { "v1.1.0" } elseif ($Version.StartsWith("v")) { $Version } else { "v$Version" }
     $DownloadUrl = if ($Version -eq "latest") {
         "https://github.com/$Repo/releases/latest/download/lako-$Tag-windows-$Arch.zip"
     } else {

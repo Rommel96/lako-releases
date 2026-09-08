@@ -16,7 +16,7 @@ Open PowerShell and run:
 irm https://raw.githubusercontent.com/Rommel96/lako-releases/main/install.ps1 | iex
 ```
 > **What does this installer do on Windows?**
-> 1. **Direct Download:** Downloads the pre-built native package (`lako-v1.0.0-windows-amd64.zip`) directly from GitHub Releases without requiring tokens or authentication.
+> 1. **Direct Download:** Downloads the pre-built native package (`lako-v1.1.0-windows-amd64.zip`) directly from GitHub Releases without requiring tokens or authentication.
 > 2. **Clean Installation:** Extracts and installs into `%LOCALAPPDATA%\Programs\Lako`.
 > 3. **Adds to User PATH:** Automatically adds `lako` to your User `PATH` environment variable so you can run `lako doctor` or `lako ui` from PowerShell, CMD, or Windows Terminal.
 > 4. **Optional Production Mode:** Prompts to register a background task (`LakoConfigurationServer`) that starts Lako automatically on login/boot and keeps it running quietly in the background at `http://127.0.0.1:25256/`.
@@ -42,12 +42,12 @@ If you prefer downloading pre-packaged archives directly:
 
 | Platform | Architecture | Direct Download Link | Format |
 |---|---|---|---|
-| **Windows** | x64 (Intel / AMD) | [lako-v1.0.0-windows-amd64.zip](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-windows-amd64.zip) | ZIP (includes `lako.exe`, `start.bat`, `install-service.ps1`) |
-| **Windows** | ARM64 | [lako-v1.0.0-windows-arm64.zip](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-windows-arm64.zip) | ZIP |
-| **macOS** | Apple Silicon (M1/M2/M3/M4) | [lako-v1.0.0-darwin-arm64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-darwin-arm64.tar.gz) | TAR.GZ |
-| **macOS** | Intel x64 | [lako-v1.0.0-darwin-amd64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-darwin-amd64.tar.gz) | TAR.GZ |
-| **Linux** | x64 (amd64) | [lako-v1.0.0-linux-amd64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-linux-amd64.tar.gz) | TAR.GZ |
-| **Linux** | ARM64 | [lako-v1.0.0-linux-arm64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.0.0-linux-arm64.tar.gz) | TAR.GZ |
+| **Windows** | x64 (Intel / AMD) | [lako-v1.1.0-windows-amd64.zip](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-windows-amd64.zip) | ZIP (includes `lako.exe`, `start.bat`, `install-service.ps1`) |
+| **Windows** | ARM64 | [lako-v1.1.0-windows-arm64.zip](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-windows-arm64.zip) | ZIP |
+| **macOS** | Apple Silicon (M1/M2/M3/M4) | [lako-v1.1.0-darwin-arm64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-darwin-arm64.tar.gz) | TAR.GZ |
+| **macOS** | Intel x64 | [lako-v1.1.0-darwin-amd64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-darwin-amd64.tar.gz) | TAR.GZ |
+| **Linux** | x64 (amd64) | [lako-v1.1.0-linux-amd64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-linux-amd64.tar.gz) | TAR.GZ |
+| **Linux** | ARM64 | [lako-v1.1.0-linux-arm64.tar.gz](https://github.com/Rommel96/lako-releases/releases/latest/download/lako-v1.1.0-linux-arm64.tar.gz) | TAR.GZ |
 
 All SHA-256 checksums are published in [checksums.sha256](https://github.com/Rommel96/lako-releases/releases/latest/download/checksums.sha256).
 
