@@ -24,7 +24,14 @@ echo "-> Target Installation Directory: ${INSTALL_DIR}"
 
 mkdir -p "${INSTALL_DIR}"
 TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "${TMP_DIR}"' EXIT
+STAGED_BIN=""
+cleanup() {
+    rm -rf "${TMP_DIR}"
+    if [ -n "${STAGED_BIN}" ]; then
+        rm -f "${STAGED_BIN}"
+    fi
+}
+trap cleanup EXIT
 
 DOWNLOADED=false
 ARCHIVE="${TMP_DIR}/lako.tar.gz"
@@ -32,7 +39,7 @@ ARCHIVE="${TMP_DIR}/lako.tar.gz"
 # 1. Direct download from GitHub Releases (no gh CLI or token required)
 TAG="${VERSION}"
 if [ "${TAG}" = "latest" ]; then
-    DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/lako-v1.1.4-${OS}-${ARCH}.tar.gz"
+    DOWNLOAD_URL="https://github.com/${REPO}/releases/latest/download/lako-v1.1.5-${OS}-${ARCH}.tar.gz"
 else
     case "${TAG}" in
         v*) ;;
@@ -95,8 +102,13 @@ fi
 echo "-> Extracting package..."
 tar -xzf "${ARCHIVE}" -C "${TMP_DIR}"
 EXTRACTED_BIN="$(find "${TMP_DIR}" -name "lako" -type f | head -n 1)"
-cp "${EXTRACTED_BIN}" "${INSTALL_DIR}/lako"
-chmod +x "${INSTALL_DIR}/lako"
+# Stage beside the destination and replace it atomically. This keeps a running
+# server on the old inode while the next invocation uses the new binary.
+STAGED_BIN="${INSTALL_DIR}/.lako-install-$$"
+cp "${EXTRACTED_BIN}" "${STAGED_BIN}"
+chmod +x "${STAGED_BIN}"
+mv -f "${STAGED_BIN}" "${INSTALL_DIR}/lako"
+STAGED_BIN=""
 
 # Configure portable directory ~/.lako if needed
 LAKO_HOME="${HOME}/.lako"
