@@ -33,14 +33,50 @@ $TempDir = Join-Path $env:TEMP ("lako-install-" + [System.Guid]::NewGuid().ToStr
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 $ZipPath = Join-Path $TempDir "lako-windows.zip"
 
+function Wait-ForLakoReady {
+    param(
+        [Parameter(Mandatory = $true)] [System.Diagnostics.Process]$Process,
+        [Parameter(Mandatory = $true)] [int]$Port,
+        [int]$TimeoutSeconds = 15
+    )
+
+    $Deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $Deadline) {
+        if ($Process.HasExited) {
+            throw "Lako exited before the UI became ready (exit code $($Process.ExitCode))."
+        }
+        try {
+            Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 1 -ErrorAction Stop | Out-Null
+            return
+        } catch {
+            Start-Sleep -Milliseconds 250
+        }
+    }
+    throw "Lako did not become ready at http://127.0.0.1:$Port/ within $TimeoutSeconds seconds."
+}
+
 try {
     # 1. Direct download from GitHub Releases (no gh CLI or token required)
     $Downloaded = $false
-    $Tag = if ($Version -eq "latest") { "v1.1.0" } elseif ($Version.StartsWith("v")) { $Version } else { "v$Version" }
-    $DownloadUrl = if ($Version -eq "latest") {
-        "https://github.com/$Repo/releases/latest/download/lako-$Tag-windows-$Arch.zip"
+    if ($Version -eq "latest") {
+        # Resolve the tag and asset from GitHub instead of baking a release
+        # number into the installer. This prevents the public script from
+        # silently downloading an old or missing package after a new release.
+        try {
+            $LatestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -Headers @{ "User-Agent" = "Lako-Installer" }
+            $Tag = $LatestRelease.tag_name
+            $Asset = $LatestRelease.assets | Where-Object { $_.name -eq "lako-$Tag-windows-$Arch.zip" } | Select-Object -First 1
+            if (-not $Asset) {
+                throw "Latest release $Tag does not contain lako-$Tag-windows-$Arch.zip."
+            }
+            $DownloadUrl = $Asset.browser_download_url
+        } catch {
+            Write-Host "   (Could not resolve the latest release through the API; trying fallback methods...)" -ForegroundColor Gray
+            $DownloadUrl = $null
+        }
     } else {
-        "https://github.com/$Repo/releases/download/$Tag/lako-$Tag-windows-$Arch.zip"
+        $Tag = if ($Version.StartsWith("v")) { $Version } else { "v$Version" }
+        $DownloadUrl = "https://github.com/$Repo/releases/download/$Tag/lako-$Tag-windows-$Arch.zip"
     }
 
     Write-Host "-> Downloading Lako for Windows $Arch from GitHub Releases..." -ForegroundColor Yellow
@@ -59,7 +95,7 @@ try {
         Write-Host "-> Downloading using GitHub CLI (gh)..." -ForegroundColor Yellow
         $ghArgs = @("release", "download", "--repo", $Repo, "--pattern", $AssetPattern, "--dir", $TempDir, "--clobber")
         if ($Version -ne "latest") {
-            $ghArgs += $Version
+            $ghArgs += $Tag
         }
         & gh @ghArgs 2>$null
         $MatchedZip = Get-ChildItem -Path $TempDir -Filter "*.zip" | Select-Object -First 1
@@ -78,7 +114,7 @@ try {
             $ApiUrl = if ($Version -eq "latest") {
                 "https://api.github.com/repos/$Repo/releases/latest"
             } else {
-                "https://api.github.com/repos/$Repo/releases/tags/$Version"
+                "https://api.github.com/repos/$Repo/releases/tags/$Tag"
             }
             $Headers = @{
                 "Authorization" = "Bearer $Token"
@@ -152,13 +188,17 @@ try {
     # 6. Start now if requested
     if ($StartNow) {
         Write-Host "Starting Lako..." -ForegroundColor Cyan
+        $LakoProcess = Start-Process -FilePath "$InstallDir\lako.exe" -ArgumentList @("ui", "--port", "25256") -WorkingDirectory $InstallDir -PassThru
+        Wait-ForLakoReady -Process $LakoProcess -Port 25256
         Start-Process "http://127.0.0.1:25256/"
-        & "$InstallDir\lako.exe" ui --port 25256
+        $LakoProcess.WaitForExit()
     } else {
         $RunNow = Read-Host "Would you like to launch the Lako UI now? (Y/N) [Default: Y]"
         if ($RunNow -ne "N" -and $RunNow -ne "n") {
+            $LakoProcess = Start-Process -FilePath "$InstallDir\lako.exe" -ArgumentList @("ui", "--port", "25256") -WorkingDirectory $InstallDir -PassThru
+            Wait-ForLakoReady -Process $LakoProcess -Port 25256
             Start-Process "http://127.0.0.1:25256/"
-            & "$InstallDir\lako.exe" ui --port 25256
+            $LakoProcess.WaitForExit()
         }
     }
 
